@@ -1,0 +1,33 @@
+{% extends "bootstrap/base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% block title %} toolbox {% endblock %}
+{% block navbar %}
+<div class="container">
+        <div class="navbar navbar-inverse">
+                <div class="navbar-header">
+                        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                                <span class="sr-only">Toggle navigation</span>
+                                <span class="icon-bar"</span>
+                        </button>
+                        <a class="navbar-brand" href="/">ZRed toolbox</a>
+                </div>
+                <div class="navbar-collapse collapse">
+                        <ul class= "nav navbar-nav" >
+                                <li><a href= "/password" > password generator</a></li>
+                                <li><a href= "/passphrase" > passphrase generator</a></li>
+                        </ul>
+                </div>
+	</div>
+</div>
+
+{% endblock %}
+{% block content %}
+<div class="container">
+	<p><code>{{passphrase}}</code> has {% if entropy %}{{entropy}} bits of entropy{% endif %}</p>
+	<form method="POST" action="/passphrase">
+		{{ form.csrf_token }}
+		{{ form.length }}
+		<input type="submit" value="Adjust Length">
+	</form>
+</div>
+{% endblock %}
