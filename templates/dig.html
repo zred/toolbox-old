@@ -24,9 +24,8 @@
 {% endblock %}
 {% block content %}
 <div class="container">
+	{{ wtf.quick_form(form) }}
 	<br />
-	<p><code>{{password}}</code> has {% if entropy %}{{entropy}} bits of entropy{% endif %}</p>
-	<br />
-        {{ wtf.quick_form(form) }}
+	<p>{{output|safe}}</p>
 </div>
 {% endblock %}

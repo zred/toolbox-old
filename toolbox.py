@@ -62,14 +62,13 @@ def passphrase():
 def dig():
 	form = DigForm()
 	domain = None
-	digout = None
 	if form.validate_on_submit():
 		domain = form.domain.data
-		digout = sub(['dig -tANY ' + domain], shell=True).replace('\n', '<br />')
+		digout = sub(['dig -t ANY ' + domain], shell=True).replace('\n', '<br />')
 		return render_template('dig.html', form=form, output=digout, domain=domain)
 	else:
 		domain = "localhost"
-		digout = sub(['dig -tANY ' + domain], shell=True).replace('\n', '<br />')
+		digout = sub(['dig -t ANY ' + domain], shell=True).replace('\n', '<br />')
 		return render_template('dig.html', form=form, output=digout, domain=domain)
 		
 if __name__ == '__main__':
