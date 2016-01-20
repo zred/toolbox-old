@@ -25,7 +25,7 @@ class PassphraseForm(Form):
     submit = SubmitField('Submit')
 
 class DigForm(Form):
-	doamin = StringField('Domain Name', validators=[Required(), IPAddress()])
+	domain = StringField('Domain Name', validators=[Required()])
 	submit = SubmitField('Submit')
 
 @app.route('/')
@@ -52,23 +52,25 @@ def passphrase():
         if form.validate_on_submit():
                 length = form.length.data
                 entropy = 12.925 * length
-                passphrase=subprocess.check_output(['diceware -n ' + str(length)], shell=True)
+                passphrase=sub(['diceware -n ' + str(length)], shell=True)
                 return render_template('ppgen.html', passphrase=passphrase, entropy=entropy, form=form)
         else:
-                passphrase = pphrase()
+                passphrase = ppgen()
                 return render_template('ppgen.html', passphrase=passphrase, entropy=entropy, form=form)
 
 @app.route('/dig', methods=('GET', 'POST'))
 def dig():
 	form = DigForm()
 	domain = None
-	digout = "<p>Please supply a domain name</p>"
+	digout = None
 	if form.validate_on_submit():
 		domain = form.domain.data
 		digout = sub(['dig -tANY ' + domain], shell=True).replace('\n', '<br />')
-		return render_template('dig.html', form=form, output=digout)
+		return render_template('dig.html', form=form, output=digout, domain=domain)
 	else:
-		return render_template('dig.html', form=form, output=digout)
+		domain = "localhost"
+		digout = sub(['dig -tANY ' + domain], shell=True).replace('\n', '<br />')
+		return render_template('dig.html', form=form, output=digout, domain=domain)
 		
 if __name__ == '__main__':
-        app.run(host='0.0.0.0', port=80)
+        app.run(host='0.0.0.0', port=80, debug=True)

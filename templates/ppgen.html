@@ -23,11 +23,9 @@
 {% endblock %}
 {% block content %}
 <div class="container">
+	<br />
 	<p><code>{{passphrase}}</code> has {% if entropy %}{{entropy}} bits of entropy{% endif %}</p>
-	<form method="POST" action="/passphrase">
-		{{ form.csrf_token }}
-		{{ form.length }}
-		<input type="submit" value="Adjust Length">
-	</form>
+	<br />
+        {{ wtf.quick_form(form) }}
 </div>
 {% endblock %}
