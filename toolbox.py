@@ -36,6 +36,10 @@ class TracerouteForm(Form):
 	domain = StringField('Domain Name', validators=[Required()])
 	submit = SubmitField('Submit')
 
+class PingForm(Form):
+	domain = StringField('Domain Name', validators=[Required()])
+	submit = SubmitField('Submit')
+
 @app.route('/')
 def index():
         return render_template('index.html')
@@ -98,6 +102,17 @@ def traceroute():
 		return render_template('traceroute.html', form=form, output=traceout, domain=domain)
 	else:
 		return render_template('traceroute.html', form=form, domain=domain)
+
+@app.route('/ping', methods=('GET', 'POST'))
+def ping():
+	form = PingForm()
+	domain = None
+	if form.validate_on_submit():
+		domain = form.domain.data
+		pingout = sub(['ping -c 5 ' + domain], shell=True).replace('\n', '<br />')
+		return render_template('ping.html', form=form, output=pingout, domain=domain)
+	else:
+		return render_template('ping.html', form=form)
 
 if __name__ == '__main__':
         app.run(host='0.0.0.0', port=80, debug=True)
