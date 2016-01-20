@@ -71,9 +71,7 @@ def dig():
 		digout = sub(['dig -t ANY ' + domain], shell=True).replace('\n', '<br />')
 		return render_template('dig.html', form=form, output=digout, domain=domain)
 	else:
-		domain = "localhost"
-		digout = sub(['dig -t ANY ' + domain], shell=True).replace('\n', '<br />')
-		return render_template('dig.html', form=form, output=digout, domain=domain)
+		return render_template('dig.html', form=form, domain=domain)
 		
 @app.route('/whois', methods=('GET', 'POST'))
 def whois():
