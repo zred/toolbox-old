@@ -13,11 +13,11 @@
                 </div>
                 <div class="navbar-collapse collapse">
                         <ul class= "nav navbar-nav" >
-                                <li><a href= "/traceroute" > traceroute </a></li>
-                                <li><a href= "/dig" > dig </a></li>
+				<li><a href= "/traceroute" > traceroute </a></li>
+				<li><a href= "/dig" > dig </a></li>
                                 <li><a href= "/whois" > whois </a></li>
-                                <li><a href= "/password" > password generator</a></li>
-                                <li><a href= "/passphrase" > passphrase generator</a></li>
+                                <li><a href= "/password" > password generator </a></li>
+                                <li><a href= "/passphrase" > passphrase generator </a></li>
                         </ul>
                 </div>
 	</div>
@@ -26,9 +26,8 @@
 {% endblock %}
 {% block content %}
 <div class="container">
+	{{ wtf.quick_form(form) }}
 	<br />
-	<p><code>{{passphrase}}</code> has {% if entropy %}{{entropy}} bits of entropy{% endif %}</p>
-	<br />
-        {{ wtf.quick_form(form) }}
+	<p>{{output|safe}}</p>
 </div>
 {% endblock %}

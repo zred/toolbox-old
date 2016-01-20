@@ -32,6 +32,10 @@ class WhoisForm(Form):
 	domain = StringField('Domain Name', validators=[Required()])
 	submit = SubmitField('Submit')
 
+class TracerouteForm(Form):
+	domain = StringField('Domain Name', validators=[Required()])
+	submit = SubmitField('Submit')
+
 @app.route('/')
 def index():
         return render_template('index.html')
@@ -83,6 +87,17 @@ def whois():
 		return render_template('whois.html', form=form, output=whoisout, domain=domain)
 	else:
 		return render_template('whois.html', form=form, domain=domain)
+
+@app.route('/traceroute', methods=('GET', 'POST'))
+def traceroute():
+	form = TracerouteForm()
+	domain = None
+	if form.validate_on_submit():
+		domain = form.domain.data
+		traceout = sub(['traceroute ' + domain], shell=True).replace('\n', '<br />')
+		return render_template('traceroute.html', form=form, output=traceout, domain=domain)
+	else:
+		return render_template('traceroute.html', form=form, domain=domain)
 
 if __name__ == '__main__':
         app.run(host='0.0.0.0', port=80, debug=True)
