@@ -1,12 +1,13 @@
 from flask import request, Flask, render_template
 from flask.ext.bootstrap import Bootstrap
 from flask.ext.wtf import Form
-from wtforms.validators import Required, NumberRange, IPAddress
+from wtforms.validators import Required, NumberRange, IPAddress, URL
 from wtforms import IntegerField, StringField, SubmitField
 from subprocess import check_output as sub
 from random import choice
 from string import letters, digits, punctuation
 from diceware import get_passphrase as ppgen
+from urlparse import urlparse
 
 cs = letters + digits + punctuation
 def pwgen(n=12): return ''.join(choice(cs) for s in range(n))
@@ -25,25 +26,25 @@ class PassphraseForm(Form):
     submit = SubmitField('Submit')
 
 class DigForm(Form):
-	domain = StringField('Domain Name', validators=[Required()])
+	domain = StringField('Domain Name', validators=[Required(), URL()])
 	submit = SubmitField('Submit')
 
 class WhoisForm(Form):
-	domain = StringField('Domain Name', validators=[Required()])
+	domain = StringField('Domain Name', validators=[Required(), URL()])
 	submit = SubmitField('Submit')
 
 class TracerouteForm(Form):
-	domain = StringField('Domain Name', validators=[Required()])
+	domain = StringField('Domain Name', validators=[Required(), URL()])
 	submit = SubmitField('Submit')
 
 class PingForm(Form):
-	domain = StringField('Domain Name', validators=[Required()])
+	domain = StringField('Domain Name', validators=[Required(), URL()])
 	submit = SubmitField('Submit')
 
 @app.route('/')
 def index():
         return render_template('index.html')
-	
+
 @app.route('/password', methods=('GET', 'POST'))
 def password():
         form = PasswordForm()
@@ -75,18 +76,18 @@ def dig():
 	form = DigForm()
 	domain = None
 	if form.validate_on_submit():
-		domain = form.domain.data
+		domain = urlparse(form.domain.data).netloc
 		digout = sub(['dig -t ANY ' + domain], shell=True).replace('\n', '<br />')
 		return render_template('dig.html', form=form, output=digout, domain=domain)
 	else:
 		return render_template('dig.html', form=form, domain=domain)
-		
+
 @app.route('/whois', methods=('GET', 'POST'))
 def whois():
 	form = WhoisForm()
 	domain = None
 	if form.validate_on_submit():
-		domain = form.domain.data
+		domain = urlparse(form.domain.data).netloc
 		whoisout = sub(['whois ' + domain], shell=True).replace('\n', '<br />')
 		return render_template('whois.html', form=form, output=whoisout, domain=domain)
 	else:
@@ -97,7 +98,7 @@ def traceroute():
 	form = TracerouteForm()
 	domain = None
 	if form.validate_on_submit():
-		domain = form.domain.data
+		domain = urlparse(form.domain.data).netloc
 		traceout = sub(['traceroute ' + domain], shell=True).replace('\n', '<br />')
 		return render_template('traceroute.html', form=form, output=traceout, domain=domain)
 	else:
@@ -108,7 +109,7 @@ def ping():
 	form = PingForm()
 	domain = None
 	if form.validate_on_submit():
-		domain = form.domain.data
+		domain = urlparse(form.domain.data).netloc
 		pingout = sub(['ping -c 5 ' + domain], shell=True).replace('\n', '<br />')
 		return render_template('ping.html', form=form, output=pingout, domain=domain)
 	else:
