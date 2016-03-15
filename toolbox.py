@@ -26,19 +26,23 @@ class PassphraseForm(Form):
     submit = SubmitField('Submit')
 
 class DigForm(Form):
-	domain = StringField('Domain Name', validators=[Required(), URL()])
+	domain = StringField('Domain Name', validators=[Required(), URL() or IPAddress()])
 	submit = SubmitField('Submit')
 
 class WhoisForm(Form):
-	domain = StringField('Domain Name', validators=[Required(), URL()])
+	domain = StringField('Domain Name', validators=[Required(), URL() or IPAddress()])
 	submit = SubmitField('Submit')
 
 class TracerouteForm(Form):
-	domain = StringField('Domain Name', validators=[Required(), URL()])
+	domain = StringField('Domain Name', validators=[Required(), URL() or IPAddress()])
 	submit = SubmitField('Submit')
 
 class PingForm(Form):
-	domain = StringField('Domain Name', validators=[Required(), URL()])
+	domain = StringField('Domain Name', validators=[Required(), URL() or IPAddress()])
+	submit = SubmitField('Submit')
+	
+class HostForm(Form):
+	domain = StringField('Domain Name', validators=[Required(), URL() or IPAddress()])
 	submit = SubmitField('Submit')
 
 @app.route('/')
@@ -114,6 +118,17 @@ def ping():
 		return render_template('ping.html', form=form, output=pingout, domain=domain)
 	else:
 		return render_template('ping.html', form=form)
+		
+@app.route('/host', methods=('GET', 'POST'))
+def host():
+	form = HostForm()
+	domain = None
+	if form.validate_on_submit():
+		domain = urlparse(form.domain.data).netloc
+		pingout = sub(['host ' + domain], shell=True).replace('\n', '<br />')
+		return render_template('host.html', form=form, output=pingout, domain=domain)
+	else:
+		return render_template('host.html', form=form)
 
 if __name__ == '__main__':
         app.run(host='0.0.0.0', port=80, debug=True)
